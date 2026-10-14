@@ -16,12 +16,12 @@ export default function RecuperarPassword() {
       }
     >
       <div className="space-y-4 text-center">
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-accent">
           <ShieldCheck size={22} />
         </span>
-        <p className="text-sm leading-relaxed text-slate-600">
+        <p className="text-sm leading-relaxed text-fg-muted">
           Por seguridad, las contraseñas del panel administrativo las restablece el{' '}
-          <span className="font-medium text-slate-800">Coordinador Master</span>. Contáctalo indicando
+          <span className="font-medium text-fg">Coordinador Master</span>. Contáctalo indicando
           el correo con el que te registraste y te asignará una contraseña temporal.
         </p>
       </div>

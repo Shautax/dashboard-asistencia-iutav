@@ -73,7 +73,7 @@ export default function Login() {
               ¿Olvidaste tu contraseña?
             </Link>
           </p>
-          <p className="text-slate-500">
+          <p className="text-fg-muted">
             ¿Eres coordinador?{' '}
             <Link to="/registro" className={authLinkClass}>
               Solicitar acceso como Coordinador
@@ -106,7 +106,7 @@ export default function Login() {
           disabled={loading}
         />
 
-        {error && <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-600">{error}</p>}
+        {error && <p className="rounded-xl bg-rose-500/10 px-3.5 py-2.5 text-sm text-rose-400">{error}</p>}
 
         <button type="submit" disabled={loading} className={authButtonClass}>
           {loading && <Loader2 size={16} className="animate-spin" />}

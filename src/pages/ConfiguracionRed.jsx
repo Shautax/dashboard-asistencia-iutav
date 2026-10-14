@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Globe, Loader2, ShieldCheck, Wifi } from 'lucide-react'
 import { ErrorMessage, LoadingMessage } from '../components/common/StatusMessage'
 import Toast from '../components/common/Toast'
+import PageHeader from '../components/common/PageHeader'
 import {
   actualizarConfiguracionRed,
   getConfiguracionRed,
@@ -28,28 +29,28 @@ function validar({ ssid, ip_permitida }) {
 function Field({ id, label, icon: Icon, hint, error, ...inputProps }) {
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className="block text-sm font-medium text-fg">
         {label}
       </label>
       <div className="relative">
         <Icon
           size={18}
-          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-fg-dim"
         />
         <input
           id={id}
           name={id}
-          className={`w-full rounded-xl border bg-slate-50/60 py-2.5 pl-11 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-4 disabled:opacity-60 ${
+          className={`input py-2.5 pl-10 ${
             error
-              ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-              : 'border-slate-200 focus:border-blue-400 focus:ring-blue-100'
+              ? 'border-rose-500/50 focus:border-rose-500/60 focus:ring-rose-500/15'
+              : 'border-line focus:border-line-focus focus:ring-accent/15'
           }`}
           aria-invalid={Boolean(error)}
           aria-describedby={`${id}-help`}
           {...inputProps}
         />
       </div>
-      <p id={`${id}-help`} className={`text-xs ${error ? 'text-red-500' : 'text-slate-400'}`}>
+      <p id={`${id}-help`} className={`text-xs ${error ? 'text-rose-400' : 'text-fg-dim'}`}>
         {error || hint}
       </p>
     </div>
@@ -117,20 +118,14 @@ export default function ConfiguracionRed() {
   const isDirty = form.ssid !== initial.ssid || form.ip_permitida !== initial.ip_permitida
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 py-4">
-      <header className="flex items-center gap-4">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-b from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25">
-          <ShieldCheck size={22} />
-        </span>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Seguridad de Red</h1>
-          <p className="text-sm text-slate-500">
-            Solo se aceptarán asistencias desde esta red del instituto.
-          </p>
-        </div>
-      </header>
+    <div className="max-w-2xl space-y-8">
+      <PageHeader
+        title="Seguridad de Red"
+        subtitle="Solo se aceptarán asistencias desde esta red del instituto"
+        icon={ShieldCheck}
+      />
 
-      <section className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.06)] sm:p-8">
+      <section className="card p-6 sm:p-8">
         {loading ? (
           <LoadingMessage>Cargando configuración...</LoadingMessage>
         ) : loadError ? (
@@ -167,7 +162,7 @@ export default function ConfiguracionRed() {
 
             {saveError && <ErrorMessage message={saveError} />}
 
-            <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-6">
+            <div className="flex items-center justify-end gap-3 border-t border-line pt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -176,14 +171,14 @@ export default function ConfiguracionRed() {
                   setSaveError('')
                 }}
                 disabled={!isDirty || saving}
-                className="rounded-full px-5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                className="btn-ghost"
               >
                 Descartar
               </button>
               <button
                 type="submit"
                 disabled={!isDirty || saving}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm shadow-blue-600/30 transition hover:bg-blue-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                className="btn-primary"
               >
                 {saving && <Loader2 size={16} className="animate-spin" />}
                 {saving ? 'Guardando...' : 'Guardar cambios'}

@@ -17,7 +17,7 @@ function agruparPorSemestre(materias) {
 }
 
 const absenceColor = (pct) =>
-  pct >= 25 ? 'text-red-600' : pct >= 15 ? 'text-amber-600' : 'text-slate-500'
+  pct >= 25 ? 'text-rose-400' : pct >= 15 ? 'text-amber-400' : 'text-fg-muted'
 
 export default function SemesterModal({ isOpen, onClose, title, materias, loading, error }) {
   const semestres = agruparPorSemestre(materias)
@@ -25,24 +25,24 @@ export default function SemesterModal({ isOpen, onClose, title, materias, loadin
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       {loading ? (
-        <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-2 py-16 text-[13px] text-fg-muted">
           <Loader2 size={18} className="animate-spin" />
           Cargando materias...
         </div>
       ) : error ? (
-        <p className="m-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+        <p className="m-6 rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-[13px] text-rose-300">{error}</p>
       ) : materias.length === 0 ? (
-        <p className="py-16 text-center text-sm text-slate-400">Esta carrera no tiene materias registradas.</p>
+        <p className="py-16 text-center text-[13px] text-fg-dim">Esta carrera no tiene materias registradas.</p>
       ) : (
         <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
           {semestres.map(({ key, name, materias: items }) => (
-            <div key={key} className="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
-              <div className="bg-blue-50 px-4 py-2.5 font-medium text-slate-800">{name}</div>
-              <ul className="divide-y divide-slate-100 px-4 text-sm">
+            <div key={key} className="overflow-hidden rounded-xl border border-line bg-surface-input">
+              <div className="border-b border-line bg-white/[0.03] px-4 py-2.5 text-[13px] font-semibold text-fg">{name}</div>
+              <ul className="divide-y divide-line px-4 text-[13px]">
                 {items.map((m) => (
                   <li key={m.id} className="py-2.5">
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-slate-700">{m.nombre}</span>
+                      <span className="text-fg">{m.nombre}</span>
                       <span
                         className={`shrink-0 text-xs font-semibold ${absenceColor(m.porcentaje_inasistencia)}`}
                         title="Inasistencia sin justificar"
@@ -50,7 +50,7 @@ export default function SemesterModal({ isOpen, onClose, title, materias, loadin
                         {m.porcentaje_inasistencia}%
                       </span>
                     </div>
-                    <p className="mt-0.5 text-xs text-slate-400">
+                    <p className="mt-0.5 text-xs text-fg-dim">
                       {m.codigo && <span className="font-mono">{m.codigo} · </span>}
                       {m.profesores ?? 'Sin profesor asignado'} · {m.inscritos} inscritos
                     </p>

@@ -24,13 +24,12 @@ const roleOptions = [
   },
 ]
 
-const inputClass =
-  'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+const inputClass = 'input'
 
 function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm font-medium text-slate-700">{label}</span>
+      <span className="mb-1 block text-sm font-medium text-fg">{label}</span>
       {children}
     </label>
   )
@@ -111,7 +110,7 @@ export default function CoordinadorForm({ carreras, onSubmit, onCancel }) {
             <button
               type="button"
               onClick={() => setShowPassword((s) => !s)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:text-slate-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-fg-dim hover:text-fg"
               aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -121,15 +120,15 @@ export default function CoordinadorForm({ carreras, onSubmit, onCancel }) {
       </div>
 
       <fieldset>
-        <legend className="mb-1 text-sm font-medium text-slate-700">Tipo de coordinador</legend>
+        <legend className="mb-1 text-sm font-medium text-fg">Tipo de coordinador</legend>
         <div className="grid gap-3 sm:grid-cols-2">
           {roleOptions.map((option) => (
             <label
               key={option.value}
               className={`flex cursor-pointer gap-3 rounded-lg border-2 p-3 transition-colors ${
                 form.rol === option.value
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-slate-200 hover:border-slate-300'
+                  ? 'border-accent bg-accent/10'
+                  : 'border-line hover:border-line-strong'
               }`}
             >
               <input
@@ -138,11 +137,11 @@ export default function CoordinadorForm({ carreras, onSubmit, onCancel }) {
                 value={option.value}
                 checked={form.rol === option.value}
                 onChange={update('rol')}
-                className="mt-1 accent-blue-600"
+                className="mt-1 accent-[#9f75ff]"
               />
               <span>
-                <span className="block text-sm font-medium text-slate-800">{option.label}</span>
-                <span className="block text-xs text-slate-500">{option.description}</span>
+                <span className="block text-sm font-medium text-fg">{option.label}</span>
+                <span className="block text-xs text-fg-muted">{option.description}</span>
               </span>
             </label>
           ))}
@@ -170,21 +169,21 @@ export default function CoordinadorForm({ carreras, onSubmit, onCancel }) {
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-400">{error}</p>
       )}
 
-      <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+      <div className="flex justify-end gap-3 border-t border-line pt-4">
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+          className="rounded-lg px-4 py-2 text-sm font-medium text-fg-muted hover:bg-white/5"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+          className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-60"
         >
           {saving && <Loader2 size={16} className="animate-spin" />}
           {saving ? 'Guardando...' : 'Crear coordinador'}

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Building2, GraduationCap, Layers, RefreshCw } from 'lucide-react'
 import KpiCard from '../components/dashboard/KpiCard'
 import CareerCard from '../components/dashboard/CareerCard'
 import AlumnosGravesTable from '../components/dashboard/AlumnosGravesTable'
 import SemesterModal from '../components/modals/SemesterModal'
+import PageHeader from '../components/common/PageHeader'
+import SectionHeader from '../components/common/SectionHeader'
 import { ErrorMessage, LoadingMessage } from '../components/common/StatusMessage'
 import { getErrorMessage } from '../api/errors'
 import {
@@ -14,7 +16,7 @@ import {
 } from '../services/dashboardService'
 
 function SkeletonCard({ className = '' }) {
-  return <div className={`animate-pulse rounded-xl bg-slate-200/70 ${className}`} />
+  return <div className={`animate-pulse rounded-2xl bg-surface-card ${className}`} />
 }
 
 // Convierte la respuesta de /dashboard/estadisticas en las 4 tarjetas KPI
@@ -26,15 +28,13 @@ function buildKpis(stats) {
     {
       key: 'general',
       highlight: true,
-      title: esInstituto
-        ? 'Inasistencia General del Instituto'
-        : `Inasistencia General de ${stats.alcance.carrera?.nombre ?? 'la Carrera'}`,
+      title: 'Inasistencia General',
       value: `${general.porcentaje}%`,
       subtitle: `${general.ausencias} faltas en ${general.clases_cerradas} clases`,
     },
     ...stats.top_materias.map((m) => ({
       key: m.id,
-      title: `Inasistencia de ${m.nombre}`,
+      title: m.nombre,
       value: `${m.porcentaje}%`,
       subtitle: esInstituto ? m.carrera : `${m.ausencias} faltas`,
       trend: m.tendencia,
@@ -102,27 +102,60 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-7xl">
+      <div>
         <ErrorMessage message={error} onRetry={loadData} />
       </div>
     )
   }
 
   const esInstituto = stats?.alcance.tipo === 'instituto'
+  const alcanceNombre = esInstituto ? 'Instituto IUTAV' : (stats?.alcance.carrera?.nombre ?? 'Mi carrera')
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {loading
-          ? Array.from({ length: 4 }, (_, i) => <SkeletonCard key={i} className="h-36" />)
-          : buildKpis(stats).map(({ key, ...kpi }) => <KpiCard key={key} {...kpi} />)}
-      </section>
+    <div className="space-y-8">
+      <PageHeader
+        title="Control de Asistencia"
+        subtitle={loading ? 'Cargando…' : `${alcanceNombre} • Inasistencia sin justificar`}
+        icon={Layers}
+        actions={
+          <button type="button" onClick={loadData} disabled={loading} className="btn-secondary">
+            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+            Actualizar
+          </button>
+        }
+      />
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-medium text-slate-800">Carreras Universitarias</h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* Tarjeta principal: alcance + KPIs */}
+      {loading ? (
+        <SkeletonCard className="h-[120px]" />
+      ) : (
+        <section className="card grid items-center gap-6 px-7 py-6 sm:grid-cols-2 xl:grid-cols-[2fr_repeat(4,minmax(0,1fr))]">
+          <div className="flex items-center gap-4 sm:col-span-2 xl:col-span-1 xl:border-r xl:border-line xl:pr-5">
+            <span className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-white/10 bg-[#2a2d38] text-fg">
+              {esInstituto ? <Building2 size={22} /> : <GraduationCap size={22} />}
+            </span>
+            <div className="min-w-0">
+              <h3 className="truncate text-xl font-semibold tracking-tight text-fg">{alcanceNombre}</h3>
+              <p className="mt-0.5 text-[13px] text-fg-muted">
+                {esInstituto ? 'Vista de todas las carreras' : 'Vista de tu carrera'}
+              </p>
+            </div>
+          </div>
+          {buildKpis(stats).map(({ key, ...kpi }) => (
+            <KpiCard key={key} {...kpi} />
+          ))}
+        </section>
+      )}
+
+      <section className="space-y-4">
+        <SectionHeader
+          icon={GraduationCap}
+          title="Carreras"
+          description="Inasistencia por carrera; abre una para ver sus materias por periodo"
+        />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {loading
-            ? Array.from({ length: 4 }, (_, i) => <SkeletonCard key={i} className="h-[170px]" />)
+            ? Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} className="h-[230px]" />)
             : carreras.map((career) => (
                 <CareerCard
                   key={career.id}
@@ -134,37 +167,29 @@ export default function Dashboard() {
               ))}
         </div>
         {!loading && carreras.length === 0 && (
-          <p className="py-8 text-center text-sm text-slate-400">No hay carreras registradas.</p>
+          <p className="card py-10 text-center text-[13px] text-fg-dim">No hay carreras registradas.</p>
         )}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-100 text-red-600">
-            <AlertTriangle size={18} />
-          </span>
-          <div>
-            <h2 className="text-lg font-medium text-slate-800">
-              Alumnos en situación grave{graves ? ` (${graves.total})` : ''}
-            </h2>
-            {graves && (
-              <p className="text-sm text-slate-500">
-                {graves.umbral_porcentaje}% o más de faltas sin justificar en una materia
-              </p>
-            )}
-          </div>
+      <section className="space-y-4">
+        <SectionHeader
+          icon={AlertTriangle}
+          title={`Alumnos en situación grave${graves ? ` (${graves.total})` : ''}`}
+          description={graves ? `${graves.umbral_porcentaje}% o más de faltas sin justificar en una materia` : undefined}
+        />
+        <div className="card p-5">
+          {loading ? (
+            <LoadingMessage>Cargando alumnos...</LoadingMessage>
+          ) : (
+            <AlumnosGravesTable alumnos={graves.alumnos} showCarrera={esInstituto} />
+          )}
         </div>
-        {loading ? (
-          <LoadingMessage>Cargando alumnos...</LoadingMessage>
-        ) : (
-          <AlumnosGravesTable alumnos={graves.alumnos} showCarrera={esInstituto} />
-        )}
       </section>
 
       <SemesterModal
         isOpen={Boolean(selectedCareer)}
         onClose={closeCareer}
-        title={`Materias por Periodo -${selectedCareer?.nombre ?? ''}`}
+        title={`Materias por periodo · ${selectedCareer?.nombre ?? ''}`}
         materias={materias}
         loading={materiasLoading}
         error={materiasError}

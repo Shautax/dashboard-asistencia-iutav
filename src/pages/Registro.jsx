@@ -54,7 +54,7 @@ export default function Registro() {
       title="Solicitar acceso"
       subtitle="Registro de Coordinador"
       footer={
-        <p className="text-slate-500">
+        <p className="text-fg-muted">
           ¿Ya tienes acceso?{' '}
           <Link to="/login" className={authLinkClass}>
             Inicia sesión
@@ -63,7 +63,7 @@ export default function Registro() {
       }
     >
       {hasMaster === null ? (
-        <div className="flex justify-center py-10 text-slate-400">
+        <div className="flex justify-center py-10 text-fg-dim">
           <Loader2 size={20} className="animate-spin" />
         </div>
       ) : (
@@ -104,7 +104,7 @@ export default function Registro() {
 
           {/* Solo existe en el DOM mientras el sistema no tenga un master */}
           {!hasMaster && (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-3.5">
+            <div className="rounded-2xl border border-dashed border-line bg-surface-input p-3.5">
               <AuthInput
                 icon={KeyRound}
                 label="Código de Instalación"
@@ -115,13 +115,13 @@ export default function Registro() {
                 placeholder="Opcional"
                 disabled={loading}
               />
-              <p className="mt-2 text-xs leading-relaxed text-slate-400">
+              <p className="mt-2 text-xs leading-relaxed text-fg-dim">
                 Solo para la configuración inicial: crea la cuenta del Coordinador Master.
               </p>
             </div>
           )}
 
-          {error && <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm text-red-600">{error}</p>}
+          {error && <p className="rounded-xl bg-rose-500/10 px-3.5 py-2.5 text-sm text-rose-400">{error}</p>}
 
           <button type="submit" disabled={loading} className={authButtonClass}>
             {loading && <Loader2 size={16} className="animate-spin" />}

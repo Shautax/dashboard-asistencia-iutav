@@ -6,11 +6,11 @@ import { getErrorMessage } from '../api/errors'
 import { ROLES, getSessionUser } from '../auth/session'
 import { asignarMateria, getProfesores, quitarMateria } from '../services/profesorService'
 import { getCarreras } from '../services/dashboardService'
+import PageHeader from '../components/common/PageHeader'
 import { formatCedula } from '../utils/format'
 
-const cardClass = 'rounded-3xl border border-slate-200/70 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)]'
-const selectClass =
-  'w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100'
+const cardClass = 'card'
+const selectClass = 'input py-2.5'
 
 // Las carreras y materias llegan ya filtradas por el backend según el rol del coordinador
 function AsignarMateriaForm({ profesores, carreras, onAssigned }) {
@@ -67,7 +67,7 @@ function AsignarMateriaForm({ profesores, carreras, onAssigned }) {
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-blue-600/30 transition hover:bg-blue-700 disabled:opacity-50"
+          className="btn-primary py-2.5"
         >
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Link2 size={16} />}
           Asignar
@@ -133,20 +133,12 @@ export default function GestionDocente() {
   }
 
   const alcance = esMaster
-    ? 'Asigna materias de cualquier carrera a los profesores del instituto.'
-    : `Asigna materias de ${carreras[0]?.nombre ?? 'tu carrera'} a los profesores.`
+    ? 'Asigna materias de cualquier carrera a los profesores del instituto'
+    : `Asigna materias de ${carreras[0]?.nombre ?? 'tu carrera'} a los profesores`
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <header className="flex items-center gap-4">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-b from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25">
-          <BookUser size={22} />
-        </span>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Gestión Docente</h1>
-          <p className="text-sm text-slate-500">{alcance}</p>
-        </div>
-      </header>
+    <div className="space-y-8">
+      <PageHeader title="Gestión Docente" subtitle={alcance} icon={BookUser} />
 
       {loading ? (
         <section className={cardClass}>
@@ -157,39 +149,39 @@ export default function GestionDocente() {
       ) : (
         <>
           <section className={`${cardClass} p-6`}>
-            <h2 className="mb-4 font-medium text-slate-800">Asignar materia</h2>
+            <h2 className="mb-4 font-medium text-fg">Asignar materia</h2>
             <AsignarMateriaForm profesores={profesores} carreras={carreras} onAssigned={handleAssigned} />
           </section>
 
           <section className={cardClass}>
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="font-medium text-slate-800">Profesores ({profesores.length})</h2>
+            <div className="border-b border-line px-6 py-4">
+              <h2 className="font-medium text-fg">Profesores ({profesores.length})</h2>
               {!esMaster && (
-                <p className="text-xs text-slate-400">Solo se muestran las materias de tu carrera.</p>
+                <p className="text-xs text-fg-dim">Solo se muestran las materias de tu carrera.</p>
               )}
             </div>
             {profesores.length === 0 ? (
-              <p className="py-10 text-center text-sm text-slate-400">No hay profesores registrados.</p>
+              <p className="py-10 text-center text-sm text-fg-dim">No hay profesores registrados.</p>
             ) : (
               <div className="overflow-x-auto px-6 py-2">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="text-xs uppercase tracking-wide text-slate-400">
+                    <tr className="table-head">
                       <th className="px-3 py-2 font-medium">Nombre</th>
                       <th className="px-3 py-2 font-medium">Cédula</th>
                       <th className="px-3 py-2 font-medium">Correo</th>
                       <th className="px-3 py-2 font-medium">Materias asignadas</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-line">
                     {profesores.map((p) => (
                       <tr key={p.id} className="align-top">
-                        <td className="px-3 py-3 font-medium text-slate-800">{p.nombre}</td>
-                        <td className="px-3 py-3 text-slate-600">{formatCedula(p.cedula)}</td>
-                        <td className="px-3 py-3 text-slate-600">{p.correo}</td>
+                        <td className="px-3 py-3 font-medium text-fg">{p.nombre}</td>
+                        <td className="px-3 py-3 text-fg-muted">{formatCedula(p.cedula)}</td>
+                        <td className="px-3 py-3 text-fg-muted">{p.correo}</td>
                         <td className="px-3 py-3">
                           {p.materias.length === 0 ? (
-                            <span className="text-xs italic text-slate-400">Sin materias</span>
+                            <span className="text-xs italic text-fg-dim">Sin materias</span>
                           ) : (
                             <div className="flex flex-wrap gap-1.5">
                               {p.materias.map((m) => {
@@ -198,14 +190,14 @@ export default function GestionDocente() {
                                   <span
                                     key={m.id}
                                     title={m.carrera}
-                                    className="flex items-center gap-1 rounded-full bg-blue-50 py-0.5 pl-2.5 pr-1 text-xs text-blue-700"
+                                    className="pill gap-1 py-0.5 pl-3 pr-1 text-fg"
                                   >
                                     {m.nombre}
                                     <button
                                       type="button"
                                       onClick={() => handleQuitar(p, m)}
                                       disabled={quitando === key}
-                                      className="rounded-full p-0.5 text-blue-400 transition hover:bg-blue-100 hover:text-blue-700 disabled:opacity-50"
+                                      className="rounded-full p-0.5 text-fg-dim transition hover:bg-white/10 hover:text-rose-400 disabled:opacity-50"
                                       aria-label={`Retirar ${m.nombre}`}
                                     >
                                       {quitando === key ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}

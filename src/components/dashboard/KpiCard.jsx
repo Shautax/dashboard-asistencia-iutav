@@ -1,7 +1,7 @@
 import { AlertTriangle, LineChart } from 'lucide-react'
 
 const WIDTH = 60
-const HEIGHT = 28
+const HEIGHT = 24
 
 // Mini gráfico de líneas con los % de inasistencia de las últimas clases
 function Sparkline({ values }) {
@@ -13,46 +13,27 @@ function Sparkline({ values }) {
   const line = points.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
 
   return (
-    <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="h-8 w-20" aria-hidden="true">
-      <path d={`${line} L${WIDTH} ${HEIGHT} L0 ${HEIGHT} Z`} className="fill-blue-100" />
-      <path d={line} className="fill-none stroke-blue-500" strokeWidth="2" strokeLinejoin="round" />
+    <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="h-6 w-16" aria-hidden="true">
+      <path d={`${line} L${WIDTH} ${HEIGHT} L0 ${HEIGHT} Z`} className="fill-accent/10" />
+      <path d={line} className="fill-none stroke-accent" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   )
 }
 
+// Columna KPI de la tarjeta principal (etiqueta pequeña, valor grande, subtítulo tenue)
 export default function KpiCard({ title, value, subtitle, highlight = false, trend }) {
-  if (highlight) {
-    return (
-      <div className="flex flex-col justify-between rounded-xl bg-blue-300/70 p-5 shadow-sm">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-medium leading-snug text-slate-800">{title}</p>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/70 text-slate-700">
-            <AlertTriangle size={18} />
-          </span>
-        </div>
-        <div className="mt-4">
-          <p className="text-4xl font-semibold text-slate-900">{value}</p>
-          {subtitle && <p className="mt-1 text-xs text-slate-700">{subtitle}</p>}
-        </div>
-      </div>
-    )
-  }
-
+  const Icon = highlight ? AlertTriangle : LineChart
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-medium leading-snug text-slate-600">{title}</p>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-          <LineChart size={16} />
-        </span>
-      </div>
-      <div className="mt-4 flex items-end justify-between gap-2">
-        <div>
-          <p className="text-3xl font-semibold text-slate-900">{value}</p>
-          {subtitle && <p className="mt-1 text-xs text-slate-500">{subtitle}</p>}
-        </div>
+    <div className="flex min-w-0 flex-col gap-1">
+      <p className="flex items-center gap-1.5 text-xs text-fg-muted" title={title}>
+        <Icon size={13} className={`shrink-0 ${highlight ? 'text-amber-400' : ''}`} />
+        <span className="truncate">{title}</span>
+      </p>
+      <div className="flex items-end justify-between gap-2">
+        <p className="mt-0.5 text-[26px] font-semibold tracking-tight text-fg">{value}</p>
         <Sparkline values={trend} />
       </div>
+      {subtitle && <p className="truncate text-xs text-fg-dim">{subtitle}</p>}
     </div>
   )
 }

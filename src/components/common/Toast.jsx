@@ -14,14 +14,14 @@ export default function Toast({ message, onClose }) {
   return (
     <div
       role="status"
-      className="fixed bottom-6 right-6 z-[60] flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-[0_12px_40px_rgba(15,23,42,0.12)] backdrop-blur"
+      className="fixed bottom-6 right-6 z-[60] flex items-center gap-3 rounded-xl border border-line-strong bg-surface-elevated/95 px-4 py-3 text-[13px] text-fg shadow-2xl shadow-black/50 backdrop-blur"
     >
       <CheckCircle2 size={18} className="text-green-500" />
       {message}
       <button
         type="button"
         onClick={onClose}
-        className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+        className="rounded-full p-1 text-fg-dim hover:bg-white/10 hover:text-fg"
         aria-label="Cerrar"
       >
         <X size={14} />
