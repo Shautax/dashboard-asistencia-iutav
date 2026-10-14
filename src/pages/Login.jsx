@@ -9,6 +9,7 @@ import {
   clearSession,
   getSessionUser,
   isAllowedRole,
+  PANEL_PATH,
   setToken,
 } from '../auth/session'
 
@@ -31,7 +32,7 @@ export default function Login() {
   // Si ya hay una sesión válida de coordinador, no mostrar el Login
   const currentUser = getSessionUser()
   if (currentUser && isAllowedRole(currentUser.rol)) {
-    return <Navigate to="/" replace />
+    return <Navigate to={PANEL_PATH} replace />
   }
 
   const handleSubmit = async (e) => {
@@ -53,7 +54,7 @@ export default function Login() {
         return
       }
 
-      navigate('/', { replace: true })
+      navigate(PANEL_PATH, { replace: true })
     } catch (err) {
       // 401: credenciales inválidas. 403: solicitud de coordinador aún pendiente de aprobación.
       setError(err.response?.status === 401 ? 'Correo o contraseña incorrectos.' : getErrorMessage(err))
@@ -77,6 +78,11 @@ export default function Login() {
             ¿Eres coordinador?{' '}
             <Link to="/registro" className={authLinkClass}>
               Solicitar acceso como Coordinador
+            </Link>
+          </p>
+          <p>
+            <Link to="/" className="text-fg-dim transition hover:text-fg">
+              ← Volver al inicio
             </Link>
           </p>
         </>

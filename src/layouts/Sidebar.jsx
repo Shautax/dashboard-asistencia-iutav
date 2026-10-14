@@ -10,11 +10,11 @@ import {
   UserCog,
   Users,
 } from 'lucide-react'
-import { ROLES, clearSession, getSessionUser } from '../auth/session'
+import { PANEL_PATH, ROLES, clearSession, getSessionUser } from '../auth/session'
 
 // "roles" limita quién ve la opción; sin "roles" la ven todos los coordinadores
 const navItems = [
-  { to: '/', label: 'Panel General', icon: Home, end: true },
+  { to: PANEL_PATH, label: 'Panel General', icon: Home, end: true },
   { to: '/alumnos', label: 'Alumnos', icon: Users },
   { to: '/gestion-docente', label: 'Gestión Docente', icon: BookUser },
   { to: '/coordinadores', label: 'Gestión de Coordinadores', icon: UserCog, roles: [ROLES.MASTER] },

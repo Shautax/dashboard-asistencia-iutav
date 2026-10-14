@@ -2,6 +2,9 @@ import { jwtDecode } from 'jwt-decode'
 
 const TOKEN_KEY = 'token'
 
+// Inicio del panel tras iniciar sesión (la raíz / es la landing pública)
+export const PANEL_PATH = '/panel'
+
 export const ROLES = {
   MASTER: 'coordinador_master',
   CARRERA: 'coordinador_carrera',

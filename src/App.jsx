@@ -1,7 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
-import { ROLES } from './auth/session'
+import { PANEL_PATH, ROLES } from './auth/session'
+import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import Registro from './pages/Registro'
 import RecuperarPassword from './pages/RecuperarPassword'
@@ -16,13 +17,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Públicas: la raíz es la landing; el panel vive en /panel */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/recuperar" element={<RecuperarPassword />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
-            <Route index element={<Dashboard />} />
+            <Route path={PANEL_PATH} element={<Dashboard />} />
             <Route path="alumnos" element={<Alumnos />} />
             {/* Master y coordinador de carrera; el backend limita las materias a su carrera */}
             <Route path="gestion-docente" element={<GestionDocente />} />

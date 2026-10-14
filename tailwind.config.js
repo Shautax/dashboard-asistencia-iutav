@@ -30,6 +30,28 @@ export default {
           hover: '#8b5cf6',
         },
         beige: '#ded1c3',
+        // Naranja de la app móvil (solo landing pública)
+        ember: {
+          DEFAULT: '#f2681c',
+          light: '#ff8a3d',
+          dark: '#c94f0c',
+        },
+      },
+      keyframes: {
+        drift: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(6%, -4%) scale(1.08)' },
+          '66%': { transform: 'translate(-5%, 5%) scale(0.95)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+      },
+      animation: {
+        drift: 'drift 22s ease-in-out infinite',
+        'drift-slow': 'drift 34s ease-in-out infinite reverse',
+        float: 'float 9s ease-in-out infinite',
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
