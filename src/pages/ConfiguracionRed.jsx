@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Globe, Loader2, ShieldCheck, Wifi } from 'lucide-react'
+import { Compass, Crosshair, Loader2, MapPin, ShieldCheck } from 'lucide-react'
 import { ErrorMessage, LoadingMessage } from '../components/common/StatusMessage'
 import Toast from '../components/common/Toast'
 import PageHeader from '../components/common/PageHeader'
@@ -9,25 +9,27 @@ import {
   getErrorMessage,
 } from '../services/configuracionService'
 
-// IPv4 exacta o rango CIDR (ej. 192.168.43.0/24): cada teléfono recibe su propia IP en la red,
-// así que lo normal es permitir el rango completo de la red Wi-Fi del instituto
-const IPV4_REGEX =
-  /^((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\/(3[0-2]|[12]?\d))?$/
-// Un SSID admite como máximo 32 bytes (no caracteres: una "ñ" ocupa 2)
-const MAX_BYTES_SSID = 32
-
 // Las claves coinciden con las que espera PUT /api/configuracion/red
-const emptyForm = { ssid_permitido: '', ip_permitida: '' }
+const emptyForm = { latitud: '', longitud: '', radio_permitido: '50' }
 
-function validar({ ssid_permitido, ip_permitida }) {
+const esNumero = (v) => v.trim() !== '' && Number.isFinite(Number(v))
+
+function validar({ latitud, longitud, radio_permitido }) {
   const errors = {}
-  if (!ssid_permitido.trim()) errors.ssid_permitido = 'El nombre de la red es obligatorio.'
-  else if (new TextEncoder().encode(ssid_permitido.trim()).length > MAX_BYTES_SSID) {
-    errors.ssid_permitido = `El SSID no puede superar ${MAX_BYTES_SSID} bytes.`
+  if (!latitud.trim()) errors.latitud = 'La latitud es obligatoria.'
+  else if (!esNumero(latitud) || Math.abs(Number(latitud)) > 90) {
+    errors.latitud = 'Ingresa una latitud válida entre -90 y 90.'
   }
 
-  if (!ip_permitida.trim()) errors.ip_permitida = 'La dirección IP es obligatoria.'
-  else if (!IPV4_REGEX.test(ip_permitida.trim())) errors.ip_permitida = 'Ingresa una IPv4 o un rango CIDR válido (ej. 192.168.43.0/24).'
+  if (!longitud.trim()) errors.longitud = 'La longitud es obligatoria.'
+  else if (!esNumero(longitud) || Math.abs(Number(longitud)) > 180) {
+    errors.longitud = 'Ingresa una longitud válida entre -180 y 180.'
+  }
+
+  if (!radio_permitido.trim()) errors.radio_permitido = 'El radio es obligatorio.'
+  else if (!esNumero(radio_permitido) || Number(radio_permitido) <= 0) {
+    errors.radio_permitido = 'El radio debe ser un número mayor a 0 (en metros).'
+  }
 
   return errors
 }
@@ -109,11 +111,10 @@ export default function ConfiguracionRed() {
 
     setSaving(true)
     try {
-      const payload = { ssid_permitido: form.ssid_permitido.trim(), ip_permitida: form.ip_permitida.trim() }
-      await actualizarConfiguracionRed(payload)
-      setForm(payload)
-      setInitial(payload)
-      setToast('Configuración de red guardada correctamente.')
+      const guardado = await actualizarConfiguracionRed(form)
+      setForm(guardado)
+      setInitial(guardado)
+      setToast('Geocerca guardada correctamente.')
     } catch (err) {
       setSaveError(getErrorMessage(err))
     } finally {
@@ -121,13 +122,16 @@ export default function ConfiguracionRed() {
     }
   }
 
-  const isDirty = form.ssid_permitido !== initial.ssid_permitido || form.ip_permitida !== initial.ip_permitida
+  const isDirty =
+    form.latitud !== initial.latitud ||
+    form.longitud !== initial.longitud ||
+    form.radio_permitido !== initial.radio_permitido
 
   return (
     <div className="max-w-2xl space-y-8">
       <PageHeader
         title="Seguridad de Red"
-        subtitle="Solo se aceptarán asistencias desde esta red del instituto"
+        subtitle="Solo se aceptarán asistencias dentro de esta zona del instituto"
         icon={ShieldCheck}
       />
 
@@ -139,31 +143,49 @@ export default function ConfiguracionRed() {
         ) : (
           <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <Field
-              id="ssid_permitido"
-              label="Nombre de la Red (SSID)"
-              icon={Wifi}
-              placeholder="Ej. TECAV-Estudiantes"
-              hint="Debe coincidir exactamente con el nombre de la red Wi-Fi (distingue mayúsculas)."
-              value={form.ssid_permitido}
+              id="latitud"
+              label="Latitud"
+              icon={MapPin}
+              type="number"
+              step="any"
+              placeholder="Ej. 10.4806"
+              hint="Coordenada decimal del centro del instituto (entre -90 y 90)."
+              value={form.latitud}
               onChange={handleChange}
-              error={fieldErrors.ssid_permitido}
+              error={fieldErrors.latitud}
               disabled={saving}
               autoComplete="off"
-              maxLength={32}
             />
 
             <Field
-              id="ip_permitida"
-              label="Dirección IP Permitida"
-              icon={Globe}
-              placeholder="Ej. 192.168.43.0/24"
-              hint="Rango de la red Wi-Fi (ej. 192.168.43.0/24 cubre a todos los teléfonos conectados) o una IPv4 exacta."
-              value={form.ip_permitida}
+              id="longitud"
+              label="Longitud"
+              icon={Compass}
+              type="number"
+              step="any"
+              placeholder="Ej. -66.9036"
+              hint="Coordenada decimal del centro del instituto (entre -180 y 180)."
+              value={form.longitud}
               onChange={handleChange}
-              error={fieldErrors.ip_permitida}
+              error={fieldErrors.longitud}
               disabled={saving}
               autoComplete="off"
-              inputMode="decimal"
+            />
+
+            <Field
+              id="radio_permitido"
+              label="Radio Permitido (metros)"
+              icon={Crosshair}
+              type="number"
+              min="1"
+              step="any"
+              placeholder="50"
+              hint="Distancia máxima desde el centro para aceptar una asistencia."
+              value={form.radio_permitido}
+              onChange={handleChange}
+              error={fieldErrors.radio_permitido}
+              disabled={saving}
+              autoComplete="off"
             />
 
             {saveError && <ErrorMessage message={saveError} />}
