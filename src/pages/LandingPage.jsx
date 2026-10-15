@@ -258,7 +258,7 @@ export default function LandingPage() {
                 {botonAcceso}
                 {/* Descarga del APK: solo visible en móviles */}
                 <a
-                  href="/app-iutav.apk"
+                  href="/app-debug.apk"
                   download
                   className="inline-flex items-center justify-center gap-2.5 rounded-full bg-[#3DDC84] px-6 py-3 text-sm font-bold text-[#0b0b0d] shadow-[0_0_28px_-4px_rgba(61,220,132,0.7)] transition hover:bg-[#5ae69a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3DDC84] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0d] md:hidden"
                 >
