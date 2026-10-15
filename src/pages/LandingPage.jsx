@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
-  AudioLines,
   BellRing,
   BookOpenCheck,
   CalendarDays,
@@ -103,7 +102,7 @@ function Etiqueta({ children }) {
 function Logo() {
   return (
     <a href="#inicio" className="flex items-center gap-2.5">
-      <AudioLines size={22} className="text-ember" />
+      <img src="/logo.png" alt="" className="h-9 w-9 object-contain" />
       <span className="text-[13px] font-semibold leading-tight text-white">
         Tecnológico
         <br />

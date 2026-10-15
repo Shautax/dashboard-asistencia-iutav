@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  BookOpenCheck,
   BookUser,
   Download,
   Home,
@@ -48,7 +47,7 @@ export default function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-16 flex-col gap-5 border-r border-line bg-surface-sidebar px-2 py-6 lg:w-[260px] lg:px-4">
       <div className="flex items-center justify-center gap-2.5 px-2 lg:justify-start">
-        <BookOpenCheck size={20} className="shrink-0 text-fg-muted" />
+        <img src="/logo.png" alt="Logo Tecnológico Américo Vespucio" className="h-8 w-8 shrink-0 object-contain" />
         <span className="hidden text-[13.5px] font-semibold tracking-tight text-fg-muted lg:inline">IUTAV · Asistencia</span>
       </div>
 
