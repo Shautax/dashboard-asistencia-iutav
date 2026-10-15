@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   BookOpenCheck,
   BookUser,
+  Download,
   Home,
   Layers,
   LogOut,
@@ -90,6 +91,18 @@ export default function Sidebar() {
             <p className="truncate text-[11.5px] text-fg-dim">{roleLabels[rol]}</p>
           </div>
         </div>
+        {/* Instalador Android servido desde /public */}
+        <a
+          href="/app-asistencia.apk"
+          download="Asistencia-IUTAV.apk"
+          type="application/vnd.android.package-archive"
+          title="Descargar App (Android)"
+          aria-label="Descargar App (Android)"
+          className="flex items-center justify-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-fg-muted transition-colors hover:bg-white/[0.03] hover:text-fg lg:justify-start"
+        >
+          <Download size={17} className="shrink-0 opacity-80" />
+          <span className="hidden truncate lg:inline">Descargar App</span>
+        </a>
         <button
           type="button"
           onClick={handleLogout}
