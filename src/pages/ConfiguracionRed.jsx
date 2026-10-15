@@ -9,19 +9,25 @@ import {
   getErrorMessage,
 } from '../services/configuracionService'
 
-// IPv4 con CIDR opcional (ej. 192.168.1.10 o 192.168.1.0/24)
+// IPv4 exacta o rango CIDR (ej. 192.168.43.0/24): cada teléfono recibe su propia IP en la red,
+// así que lo normal es permitir el rango completo de la red Wi-Fi del instituto
 const IPV4_REGEX =
   /^((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\/(3[0-2]|[12]?\d))?$/
+// Un SSID admite como máximo 32 bytes (no caracteres: una "ñ" ocupa 2)
+const MAX_BYTES_SSID = 32
 
-const emptyForm = { ssid: '', ip_permitida: '' }
+// Las claves coinciden con las que espera PUT /api/configuracion/red
+const emptyForm = { ssid_permitido: '', ip_permitida: '' }
 
-function validar({ ssid, ip_permitida }) {
+function validar({ ssid_permitido, ip_permitida }) {
   const errors = {}
-  if (!ssid.trim()) errors.ssid = 'El nombre de la red es obligatorio.'
-  else if (ssid.trim().length > 32) errors.ssid = 'El SSID no puede superar 32 caracteres.'
+  if (!ssid_permitido.trim()) errors.ssid_permitido = 'El nombre de la red es obligatorio.'
+  else if (new TextEncoder().encode(ssid_permitido.trim()).length > MAX_BYTES_SSID) {
+    errors.ssid_permitido = `El SSID no puede superar ${MAX_BYTES_SSID} bytes.`
+  }
 
   if (!ip_permitida.trim()) errors.ip_permitida = 'La dirección IP es obligatoria.'
-  else if (!IPV4_REGEX.test(ip_permitida.trim())) errors.ip_permitida = 'Ingresa una IPv4 válida.'
+  else if (!IPV4_REGEX.test(ip_permitida.trim())) errors.ip_permitida = 'Ingresa una IPv4 o un rango CIDR válido (ej. 192.168.43.0/24).'
 
   return errors
 }
@@ -103,7 +109,7 @@ export default function ConfiguracionRed() {
 
     setSaving(true)
     try {
-      const payload = { ssid: form.ssid.trim(), ip_permitida: form.ip_permitida.trim() }
+      const payload = { ssid_permitido: form.ssid_permitido.trim(), ip_permitida: form.ip_permitida.trim() }
       await actualizarConfiguracionRed(payload)
       setForm(payload)
       setInitial(payload)
@@ -115,7 +121,7 @@ export default function ConfiguracionRed() {
     }
   }
 
-  const isDirty = form.ssid !== initial.ssid || form.ip_permitida !== initial.ip_permitida
+  const isDirty = form.ssid_permitido !== initial.ssid_permitido || form.ip_permitida !== initial.ip_permitida
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -133,14 +139,14 @@ export default function ConfiguracionRed() {
         ) : (
           <form onSubmit={handleSubmit} noValidate className="space-y-6">
             <Field
-              id="ssid"
+              id="ssid_permitido"
               label="Nombre de la Red (SSID)"
               icon={Wifi}
               placeholder="Ej. TECAV-Estudiantes"
               hint="Debe coincidir exactamente con el nombre de la red Wi-Fi (distingue mayúsculas)."
-              value={form.ssid}
+              value={form.ssid_permitido}
               onChange={handleChange}
-              error={fieldErrors.ssid}
+              error={fieldErrors.ssid_permitido}
               disabled={saving}
               autoComplete="off"
               maxLength={32}
@@ -150,8 +156,8 @@ export default function ConfiguracionRed() {
               id="ip_permitida"
               label="Dirección IP Permitida"
               icon={Globe}
-              placeholder="Ej. 190.202.10.15"
-              hint="IP pública de salida del instituto. Admite notación CIDR (ej. 10.0.0.0/24)."
+              placeholder="Ej. 192.168.43.0/24"
+              hint="Rango de la red Wi-Fi (ej. 192.168.43.0/24 cubre a todos los teléfonos conectados) o una IPv4 exacta."
               value={form.ip_permitida}
               onChange={handleChange}
               error={fieldErrors.ip_permitida}
